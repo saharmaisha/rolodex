@@ -5,11 +5,16 @@ const TAB_COLORS = [
   '#6b2d3e', '#2d4a3e', '#2a3548', '#7a5c2e',
   '#4a2d5c', '#3e4a2d', '#5c2d2d', '#2d3e5c'
 ]
+const CARD_WIDTH = 440
+const TAB_MAX_WIDTH = 160
+const TAB_RIGHT_PADDING = 10
 
 export default function Card({ card, schema, index, totalCards, radius, isFront, onTabClick }) {
   const angle = (index / totalCards) * 360
   const tabColor = TAB_COLORS[index % TAB_COLORS.length]
-  const tabOffset = (index % 5) * 76 + 10
+  const rawTabOffset = (index % 5) * 76 + 10
+  const maxTabOffset = CARD_WIDTH - TAB_MAX_WIDTH - TAB_RIGHT_PADDING
+  const tabOffset = Math.max(10, Math.min(rawTabOffset, maxTabOffset))
 
   const frontBoost = isFront ? 2 : 0
   const style = useMemo(
