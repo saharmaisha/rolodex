@@ -31,9 +31,18 @@ export function useNotion() {
     loadSchema()
   }, [])
 
+  const titlePropName = schema
+    ? Object.entries(schema.properties).find(([, p]) => p.type === 'title')?.[0]
+    : null
+
+  const defaultSorts = titlePropName
+    ? [{ property: titlePropName, direction: 'ascending' }]
+    : undefined
+
   const fetchCards = useCallback(async ({ filter, sorts } = {}) => {
+    const effectiveSorts = sorts || defaultSorts
     const requestId = ++abortRef.current
-    lastFilterRef.current = { filter, sorts }
+    lastFilterRef.current = { filter, sorts: effectiveSorts }
     setLoading(true)
     setError(null)
 
@@ -43,7 +52,7 @@ export function useNotion() {
       let hasMore = true
 
       while (hasMore) {
-        const result = await window.notion.query({ filter, sorts, startCursor: cursor })
+        const result = await window.notion.query({ filter, sorts: effectiveSorts, startCursor: cursor })
         if (requestId !== abortRef.current) return
 
         if (result.error) {
@@ -66,7 +75,7 @@ export function useNotion() {
         setLoading(false)
       }
     }
-  }, [])
+  }, [defaultSorts])
 
   useEffect(() => {
     if (schema) fetchCards()
