@@ -1,0 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg-primary: #0f0d0a;
+  --bg-secondary: #1a1612;
+  --bg-tertiary: #262019;
+  --bg-elevated: #2e2720;
+  --gold: #d4a853;
+  --gold-light: #e8c36e;
+  --gold-dark: #b8923e;
+  --gold-dim: rgba(212, 168, 83, 0.12);
+  --cream: #f7f2e9;
+  --cream-dark: #ede4d3;
+  --cream-warm: #f2ead8;
+  --text-primary: #efe8dc;
+  --text-secondary: #c4b8a4;
+  --text-muted: #8a7e6e;
+  --card-line: #d5cabb;
+  --shadow: rgba(0, 0, 0, 0.5);
+  --accent-burgundy: #6b2d3e;
+  --accent-forest: #2d4a3e;
+  --accent-navy: #2a3548;
+  --accent-ochre: #7a5c2e;
+  --accent-plum: #4a2d5c;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(107, 45, 62, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(45, 74, 62, 0.06) 0%, transparent 50%),
+    linear-gradient(180deg, #0f0d0a 0%, #1a1612 40%, #161210 100%);
+  position: relative;
+}
+
+.app::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.app > * {
+  position: relative;
+  z-index: 1;
+}
+
+.app-titlebar {
+  height: 38px;
+  -webkit-app-region: drag;
+  flex-shrink: 0;
+}
+
+.app-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 0 32px 16px;
+  flex-shrink: 0;
+}
+
+.app-title {
+  font-family: var(--font-display);
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.app-subtitle {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  color: var(--text-secondary);
+  font-weight: 400;
+  font-style: italic;
+}
+
+.app-error {
+  margin: 0 32px 12px;
+  padding: 12px 16px;
+  background: rgba(107, 45, 62, 0.2);
+  border: 1px solid rgba(107, 45, 62, 0.4);
+  border-radius: 8px;
+  color: #e8a0a0;
+  font-size: 13px;
+}
+
+.app-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.rolodex-scene {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1200px;
+  overflow: hidden;
+  position: relative;
+}
+
+.card-count {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  font-family: var(--font-serif);
+  color: var(--text-muted);
+  pointer-events: none;
+  letter-spacing: 0.05em;
+}
+
+::selection {
+  background: var(--gold);
+  color: var(--bg-primary);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--text-muted);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}

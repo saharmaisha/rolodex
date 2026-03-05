@@ -1,0 +1,804 @@
+/* ── Cards ── */
+.card {
+  position: absolute;
+  width: 440px;
+  height: 240px;
+  left: 50%;
+  top: 50%;
+  margin-left: -220px;
+  margin-top: -120px;
+  backface-visibility: hidden;
+  transform-origin: center center;
+}
+
+.card--back {
+  pointer-events: none;
+  cursor: default;
+}
+
+.card--back .card-inner {
+  pointer-events: none;
+}
+
+.card--front {
+  pointer-events: auto;
+  z-index: 5;
+}
+
+.card--front .card-inner {
+  box-shadow:
+    0 6px 28px rgba(0, 0, 0, 0.35),
+    0 0 0 1px rgba(212, 168, 83, 0.12);
+}
+
+/* ── Tab ── */
+.card-tab {
+  position: absolute;
+  top: -16px;
+  left: var(--tab-offset, 30px);
+  height: 20px;
+  padding: 0 14px;
+  background: var(--tab-color, var(--accent-burgundy));
+  border-radius: 5px 5px 0 0;
+  display: flex;
+  align-items: center;
+  max-width: 160px;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card-tab:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.card-tab-name {
+  font-family: var(--font-body);
+  font-size: 9px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Card Body ── */
+.card-inner {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(170deg, var(--cream) 0%, var(--cream-warm) 100%);
+  border-radius: 4px;
+  padding: 22px 28px 18px;
+  position: relative;
+  overflow: hidden;
+  box-shadow:
+    0 2px 12px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.card-lines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 29px,
+    var(--card-line) 29px,
+    var(--card-line) 30px
+  );
+  opacity: 0.3;
+}
+
+/* ── Card Detail (Pull-out) ── */
+.card-detail-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 6, 4, 0.8);
+  backdrop-filter: blur(12px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: overlayFadeIn 0.3s ease;
+}
+
+.card-detail {
+  width: 540px;
+  max-height: 82vh;
+  background: linear-gradient(170deg, var(--cream) 0%, var(--cream-warm) 100%);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(212, 168, 83, 0.1),
+    0 0 80px rgba(212, 168, 83, 0.04);
+  animation: cardPullOut 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.card-detail::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg,
+    var(--accent-burgundy),
+    var(--gold-dark),
+    var(--accent-forest)
+  );
+  opacity: 0.7;
+}
+
+.card-detail-header {
+  padding: 28px 28px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.card-detail-title {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  color: #1e1a16;
+  line-height: 1.3;
+  flex: 1;
+}
+
+.card-detail-close {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.04);
+  color: #6a6058;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.card-detail-close:hover {
+  background: rgba(0, 0, 0, 0.1);
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.card-detail-body {
+  padding: 16px 28px 28px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.card-detail-field {
+  display: flex;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.card-detail-field:last-child {
+  border-bottom: none;
+}
+
+.card-detail-field-label {
+  color: #7a6e5e;
+  font-weight: 500;
+  min-width: 140px;
+  flex-shrink: 0;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-top: 2px;
+}
+
+.card-detail-field-value {
+  color: #1e1a16;
+  word-break: break-word;
+}
+
+.card-detail-link {
+  color: var(--accent-burgundy);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(107, 45, 62, 0.3);
+  transition: border-color 0.15s;
+}
+
+.card-detail-link:hover {
+  border-color: var(--accent-burgundy);
+}
+
+.card-detail-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.card-detail-tag {
+  background: rgba(42, 53, 72, 0.1);
+  border: 1px solid rgba(42, 53, 72, 0.15);
+  padding: 2px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: #2a3548;
+}
+
+.card-detail-notion-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 6px 14px;
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
+  color: #5a5048;
+  font-size: 12px;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.card-detail-notion-link:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* ── Animations ── */
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes cardPullOut {
+  from {
+    opacity: 0;
+    transform: scale(0.7) translateY(40px) rotateX(-8deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0) rotateX(0deg);
+  }
+}
+
+/* ── Filter Bar ── */
+.filter-bar {
+  padding: 0 32px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.filter-bar-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: var(--bg-tertiary);
+  border: 1px solid rgba(212, 168, 83, 0.12);
+  border-radius: 6px;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.filter-bar-toggle:hover {
+  background: var(--gold-dim);
+  border-color: rgba(212, 168, 83, 0.25);
+}
+
+.filter-bar-toggle svg {
+  width: 14px;
+  height: 14px;
+}
+
+.filter-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  animation: overlayFadeIn 0.2s ease;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.filter-label {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.filter-input,
+.filter-select {
+  padding: 5px 10px;
+  background: var(--bg-tertiary);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 5px;
+  color: var(--text-primary);
+  font-size: 12px;
+  font-family: var(--font-body);
+  min-width: 120px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.filter-input:focus,
+.filter-select:focus {
+  border-color: var(--gold-dark);
+}
+
+.filter-select {
+  appearance: none;
+  padding-right: 24px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 5l3 3 3-3' stroke='%23b0a898' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  cursor: pointer;
+}
+
+.filter-select option {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.filter-checkbox-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-top: 14px;
+}
+
+.filter-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--gold);
+  cursor: pointer;
+}
+
+.filter-checkbox-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.filter-clear {
+  padding: 5px 12px;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 5px;
+  color: var(--text-muted);
+  font-size: 11px;
+  cursor: pointer;
+  margin-top: 14px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.filter-clear:hover {
+  color: var(--text-secondary);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.filter-number-range {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.filter-number-range .filter-input {
+  min-width: 60px;
+  width: 70px;
+}
+
+.filter-number-sep {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.filter-date-range {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.filter-date-range .filter-input {
+  min-width: 100px;
+}
+
+.filter-input[type="date"] {
+  color-scheme: dark;
+}
+
+/* ── Card Detail Actions ── */
+.card-detail-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.card-detail-btn {
+  padding: 6px 14px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.card-detail-btn--edit {
+  background: rgba(42, 53, 72, 0.1);
+  border: 1px solid rgba(42, 53, 72, 0.2);
+  color: #2a3548;
+}
+
+.card-detail-btn--edit:hover {
+  background: rgba(42, 53, 72, 0.18);
+  border-color: rgba(42, 53, 72, 0.35);
+}
+
+.card-detail-btn--delete {
+  background: rgba(107, 45, 62, 0.08);
+  border: 1px solid rgba(107, 45, 62, 0.15);
+  color: #8b3a4a;
+}
+
+.card-detail-btn--delete:hover {
+  background: rgba(107, 45, 62, 0.18);
+  border-color: rgba(107, 45, 62, 0.35);
+}
+
+.card-detail-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.card-detail-confirm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 28px;
+  background: rgba(107, 45, 62, 0.08);
+  border-top: 1px solid rgba(107, 45, 62, 0.12);
+  font-size: 13px;
+  color: #6a4040;
+}
+
+.card-detail-confirm span {
+  flex: 1;
+}
+
+.card-detail-confirm-btn {
+  padding: 5px 14px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.card-detail-confirm-btn--yes {
+  background: #8b3a4a;
+  border: none;
+  color: #fff;
+}
+
+.card-detail-confirm-btn--yes:hover {
+  background: #a04050;
+}
+
+.card-detail-confirm-btn--no {
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #5a5048;
+}
+
+.card-detail-confirm-btn--no:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+/* ── Card Form ── */
+.card-form {
+  max-height: 85vh;
+}
+
+.card-form-body {
+  padding: 16px 28px 28px;
+  overflow-y: auto;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.card-form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-form-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #7a6e5e;
+}
+
+.card-form-input,
+.card-form-select {
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 5px;
+  font-size: 14px;
+  font-family: var(--font-body);
+  color: #1e1a16;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.card-form-input:focus,
+.card-form-select:focus {
+  border-color: var(--gold-dark);
+  box-shadow: 0 0 0 2px rgba(212, 168, 83, 0.15);
+}
+
+.card-form-select {
+  appearance: none;
+  padding-right: 28px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 5l3 3 3-3' stroke='%237a6e5e' fill='none' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  cursor: pointer;
+}
+
+.card-form-multi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.card-form-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  background: rgba(42, 53, 72, 0.08);
+  border: 1px solid rgba(42, 53, 72, 0.15);
+  border-radius: 14px;
+  font-size: 12px;
+  color: #2a3548;
+  white-space: nowrap;
+}
+
+.card-form-chip--selected {
+  background: rgba(42, 53, 72, 0.12);
+  border-color: rgba(42, 53, 72, 0.22);
+}
+
+.card-form-chip-remove {
+  background: none;
+  border: none;
+  color: #7a6e5e;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+  opacity: 0.6;
+  transition: opacity 0.15s;
+}
+
+.card-form-chip-remove:hover {
+  opacity: 1;
+  color: #8b3a4a;
+}
+
+.card-form-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #2e2820;
+  cursor: pointer;
+}
+
+.card-form-toggle input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--gold-dark);
+  cursor: pointer;
+}
+
+.card-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  margin-top: 4px;
+}
+
+.card-form-btn {
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.card-form-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.card-form-btn--cancel {
+  background: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #5a5048;
+}
+
+.card-form-btn--cancel:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.card-form-btn--save {
+  background: var(--gold-dark);
+  border: 1px solid transparent;
+  color: #fff;
+}
+
+.card-form-btn--save:hover:not(:disabled) {
+  background: var(--gold);
+}
+
+/* ── Combobox (select/status) ── */
+.card-form-combo {
+  position: relative;
+}
+
+.card-form-combo-clear {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #7a6e5e;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  opacity: 0.5;
+  transition: opacity 0.15s;
+}
+
+.card-form-combo-clear:hover {
+  opacity: 1;
+}
+
+.card-form-combo-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background: #faf6ef;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 20;
+}
+
+.card-form-combo-option {
+  padding: 7px 12px;
+  font-size: 13px;
+  color: #2e2820;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.card-form-combo-option:hover {
+  background: rgba(212, 168, 83, 0.12);
+}
+
+.card-form-combo-option--active {
+  background: rgba(212, 168, 83, 0.08);
+  font-weight: 600;
+}
+
+.card-form-combo-create {
+  color: var(--gold-dark, #a08050);
+  font-style: italic;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* ── Multi-select wrapper ── */
+.card-form-multi-wrap {
+  position: relative;
+}
+
+.card-form-multi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 5px;
+  min-height: 36px;
+  align-items: center;
+  transition: border-color 0.15s;
+}
+
+.card-form-multi:focus-within {
+  border-color: var(--gold-dark);
+  box-shadow: 0 0 0 2px rgba(212, 168, 83, 0.15);
+}
+
+.card-form-multi-input {
+  flex: 1;
+  min-width: 80px;
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-family: var(--font-body);
+  color: #1e1a16;
+  outline: none;
+  padding: 2px 4px;
+}
+
+.card-form-multi-input::placeholder {
+  color: #b0a898;
+}
+
+/* ── Add Card Button ── */
+.add-card-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  background: var(--bg-tertiary);
+  border: 1px solid rgba(212, 168, 83, 0.15);
+  border-radius: 6px;
+  color: var(--gold);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.add-card-btn:hover {
+  background: var(--gold-dim);
+  border-color: rgba(212, 168, 83, 0.3);
+}
+
+.add-card-btn svg {
+  width: 14px;
+  height: 14px;
+}
