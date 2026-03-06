@@ -12,6 +12,13 @@ import '../styles/rolodex.css'
 const VISIBLE_SLOTS = 24
 const RADIUS = 420
 
+const clampRotation = (rotation, totalCards, sliceAngle) => {
+  if (totalCards === 0) return 0
+  const minRotation = 0 // First card at front
+  const maxRotation = -((totalCards - 1) * sliceAngle) // Last card at front
+  return Math.max(maxRotation, Math.min(minRotation, rotation))
+}
+
 const Rolodex = forwardRef(function Rolodex(
   { cards, schema, loading, onCardSelect, onIntroComplete },
   ref
@@ -30,12 +37,6 @@ const Rolodex = forwardRef(function Rolodex(
   useEffect(() => {
     if (totalCards > 0 && !hasCardsLoaded) setHasCardsLoaded(true)
   }, [totalCards, hasCardsLoaded])
-
-  useImperativeHandle(ref, () => ({
-    spinTo: (index) => {
-      animateToAngle(-(index * sliceAngle))
-    }
-  }))
 
   const animateToAngle = useCallback((targetAngle, onComplete) => {
     cancelAnimationFrame(animFrameRef.current)
@@ -60,10 +61,18 @@ const Rolodex = forwardRef(function Rolodex(
     animFrameRef.current = requestAnimationFrame(step)
   }, [])
 
+  useImperativeHandle(ref, () => ({
+    spinTo: (index) => {
+      const clampedIndex = Math.max(0, Math.min(index, totalCards - 1))
+      animateToAngle(-(clampedIndex * sliceAngle))
+    }
+  }), [totalCards, sliceAngle, animateToAngle])
+
   const snapToNearest = useCallback(() => {
     if (totalCards === 0) return
-    const nearestIndex = Math.round(-rotationRef.current / sliceAngle)
-    const target = -(nearestIndex * sliceAngle)
+    const rawIndex = Math.round(-rotationRef.current / sliceAngle)
+    const clampedIndex = Math.max(0, Math.min(rawIndex, totalCards - 1))
+    const target = -(clampedIndex * sliceAngle)
     animateToAngle(target)
   }, [totalCards, sliceAngle, animateToAngle])
 
@@ -109,7 +118,13 @@ const Rolodex = forwardRef(function Rolodex(
 
       if (Math.abs(velocityRef.current) > 0.5) {
         velocityRef.current *= 0.95
-        rotationRef.current = rotationRef.current + velocityRef.current * dt
+        const unclamped = rotationRef.current + velocityRef.current * dt
+        const clamped = clampRotation(unclamped, totalCards, sliceAngle)
+        // Stop momentum if we hit a bound
+        if (clamped !== unclamped) {
+          velocityRef.current = 0
+        }
+        rotationRef.current = clamped
         setRotation(rotationRef.current)
       } else if (Math.abs(velocityRef.current) <= 0.5) {
         velocityRef.current = 0
@@ -119,18 +134,24 @@ const Rolodex = forwardRef(function Rolodex(
     }
     animFrameRef.current = requestAnimationFrame(momentumLoop)
     return () => cancelAnimationFrame(animFrameRef.current)
-  }, [introPlaying])
+  }, [introPlaying, totalCards, sliceAngle])
 
   const handleWheel = useCallback(
     (e) => {
       if (introPlaying) return
       e.preventDefault()
       const delta = -e.deltaY * 0.15
-      rotationRef.current = rotationRef.current + delta
-      velocityRef.current = delta * 10
+      const newRotation = clampRotation(rotationRef.current + delta, totalCards, sliceAngle)
+      // Stop velocity if we hit a bound
+      if (newRotation === rotationRef.current && delta !== 0) {
+        velocityRef.current = 0
+      } else {
+        velocityRef.current = delta * 10
+      }
+      rotationRef.current = newRotation
       setRotation(rotationRef.current)
     },
-    [introPlaying]
+    [introPlaying, totalCards, sliceAngle]
   )
 
   const handleKeyDown = useCallback(
@@ -138,12 +159,12 @@ const Rolodex = forwardRef(function Rolodex(
       if (introPlaying) return
       if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
         e.preventDefault()
-        rotationRef.current = rotationRef.current + sliceAngle
+        rotationRef.current = clampRotation(rotationRef.current + sliceAngle, totalCards, sliceAngle)
         setRotation(rotationRef.current)
         snapToNearest()
       } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
         e.preventDefault()
-        rotationRef.current = rotationRef.current - sliceAngle
+        rotationRef.current = clampRotation(rotationRef.current - sliceAngle, totalCards, sliceAngle)
         setRotation(rotationRef.current)
         snapToNearest()
       } else if (e.key === 'Enter') {
@@ -209,9 +230,9 @@ const Rolodex = forwardRef(function Rolodex(
             '--radius': `${RADIUS}px`
           }}
         >
-          {visibleCards.map(({ card, index, isFront }) => (
+          {visibleCards.map(({ card, index, isFront, offset }) => (
             <Card
-              key={card.id}
+              key={`slot-${offset}`}
               card={card}
               schema={schema}
               index={index}

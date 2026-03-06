@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 
 export function useNotion() {
   const [schema, setSchema] = useState(null)
@@ -8,6 +8,7 @@ export function useNotion() {
   const [mutating, setMutating] = useState(false)
   const abortRef = useRef(0)
   const lastFilterRef = useRef({})
+  const hasInitialFetchRunRef = useRef(false)
 
   const refreshSchema = useCallback(async () => {
     const result = await window.notion.getSchema()
@@ -35,9 +36,10 @@ export function useNotion() {
     ? Object.entries(schema.properties).find(([, p]) => p.type === 'title')?.[0]
     : null
 
-  const defaultSorts = titlePropName
-    ? [{ property: titlePropName, direction: 'ascending' }]
-    : undefined
+  const defaultSorts = useMemo(
+    () => (titlePropName ? [{ property: titlePropName, direction: 'ascending' }] : undefined),
+    [titlePropName]
+  )
 
   const fetchCards = useCallback(async ({ filter, sorts } = {}) => {
     const effectiveSorts = sorts || defaultSorts
@@ -78,7 +80,9 @@ export function useNotion() {
   }, [defaultSorts])
 
   useEffect(() => {
-    if (schema) fetchCards()
+    if (!schema || hasInitialFetchRunRef.current) return
+    hasInitialFetchRunRef.current = true
+    fetchCards(lastFilterRef.current)
   }, [schema, fetchCards])
 
   const createCard = useCallback(async (properties) => {
