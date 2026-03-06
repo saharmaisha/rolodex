@@ -193,9 +193,28 @@ const Rolodex = forwardRef(function Rolodex(
   const getVisibleCards = () => {
     if (totalCards === 0) return []
     const frontIdx = getFrontIndex()
+
+    // For small card counts, only show each card once to prevent duplicates
+    if (totalCards <= VISIBLE_SLOTS) {
+      const visible = []
+      for (let i = 0; i < totalCards; i++) {
+        const idx = ((frontIdx + i) % totalCards + totalCards) % totalCards
+        // Calculate offset from front for slot-based positioning
+        let offset = i
+        if (offset > totalCards / 2) offset = offset - totalCards
+        visible.push({
+          card: cards[idx],
+          index: idx,
+          offset: offset,
+          isFront: i === 0
+        })
+      }
+      return visible
+    }
+
+    // Original logic for large card counts
     const half = Math.floor(VISIBLE_SLOTS / 2)
     const visible = []
-
     for (let i = -half; i <= half; i++) {
       const idx = ((frontIdx + i) % totalCards + totalCards) % totalCards
       visible.push({

@@ -125,21 +125,6 @@ export default function App() {
   return (
     <div className="app">
       <div className="app-titlebar" />
-      <header className="app-header">
-        <h1 className="app-title">Rolodex</h1>
-        {schema && (
-          <span className="app-subtitle">{schema.title}</span>
-        )}
-        {schema && (
-          <button className="add-card-btn" onClick={handleAddCard}>
-            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="8" y1="3" x2="8" y2="13" />
-              <line x1="3" y1="8" x2="13" y2="8" />
-            </svg>
-            Add Card
-          </button>
-        )}
-      </header>
 
       {error && (
         <div className="app-error">
@@ -149,24 +134,34 @@ export default function App() {
 
       <div className="app-body">
         {schema && (
-          <div className="name-search">
-            <input
-              type="text"
-              className="name-search-input"
-              placeholder="Search names..."
-              value={nameQuery}
-              onChange={handleNameQueryChange}
+          <div className="app-toolbar">
+            <div className="toolbar-search">
+              <svg className="search-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="7" cy="7" r="4.5" />
+                <line x1="10.5" y1="10.5" x2="14" y2="14" />
+              </svg>
+              <input
+                type="text"
+                className="toolbar-search-input"
+                placeholder={`Search ${schema.title || 'cards'}...`}
+                value={nameQuery}
+                onChange={handleNameQueryChange}
+              />
+              <button className="toolbar-add-btn" onClick={handleAddCard} title="Add Card">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="8" y1="3" x2="8" y2="13" />
+                  <line x1="3" y1="8" x2="13" y2="8" />
+                </svg>
+              </button>
+            </div>
+            <FilterBar
+              schema={schema.properties}
+              filters={activeFilters}
+              advancedFilters={advancedFilters}
+              onChange={handleFilterChange}
+              onAdvancedChange={handleAdvancedFilterChange}
             />
           </div>
-        )}
-        {schema && (
-          <FilterBar
-            schema={schema.properties}
-            filters={activeFilters}
-            advancedFilters={advancedFilters}
-            onChange={handleFilterChange}
-            onAdvancedChange={handleAdvancedFilterChange}
-          />
         )}
 
         <div className="rolodex-scene">

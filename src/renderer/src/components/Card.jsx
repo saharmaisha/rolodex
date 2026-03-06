@@ -2,19 +2,24 @@ import React, { useMemo } from 'react'
 import '../styles/card.css'
 
 const TAB_COLORS = [
-  '#6b2d3e', '#2d4a3e', '#2a3548', '#7a5c2e',
-  '#4a2d5c', '#3e4a2d', '#5c2d2d', '#2d3e5c'
+  '#5c4a3d', // Warm brown
+  '#4a5c52', // Muted forest
+  '#4d4a5c', // Muted plum
 ]
 const CARD_WIDTH = 440
-const TAB_MAX_WIDTH = 160
-const TAB_RIGHT_PADDING = 10
+const TAB_MAX_WIDTH = 180
+const TAB_LANES = 5
+const TAB_BASE_OFFSET = 30
+const TAB_LANE_STEP = 70
 
 export default function Card({ card, schema, index, totalCards, radius, isFront, onTabClick }) {
   const angle = (index / totalCards) * 360
-  const tabColor = TAB_COLORS[index % TAB_COLORS.length]
-  const rawTabOffset = (index % 5) * 76 + 10
-  const maxTabOffset = CARD_WIDTH - TAB_MAX_WIDTH - TAB_RIGHT_PADDING
-  const tabOffset = Math.max(10, Math.min(rawTabOffset, maxTabOffset))
+  const colorIndex = hashString(getCardStableKey(card, schema)) % TAB_COLORS.length
+  const tabColor = TAB_COLORS[colorIndex]
+  const lane = getTabLane(card, schema, TAB_LANES)
+  const rawTabOffset = TAB_BASE_OFFSET + (lane * TAB_LANE_STEP)
+  const maxTabOffset = CARD_WIDTH - TAB_MAX_WIDTH - 10
+  const tabOffset = Math.max(20, Math.min(rawTabOffset, maxTabOffset))
 
   const frontBoost = isFront ? 2 : 0
   const style = useMemo(
@@ -60,4 +65,25 @@ function findTitle(card, schema) {
     if (typeof val === 'string' && val.length > 0) return val
   }
   return 'Untitled'
+}
+
+function getTabLane(card, schema, laneCount) {
+  const stableKey = getCardStableKey(card, schema)
+  const hash = hashString(stableKey)
+  return hash % laneCount
+}
+
+function getCardStableKey(card, schema) {
+  if (card?.id) return String(card.id)
+  const title = findTitle(card || {}, schema)
+  return title || JSON.stringify(card || {})
+}
+
+function hashString(value) {
+  let hash = 0
+  for (let i = 0; i < value.length; i++) {
+    hash = ((hash << 5) - hash) + value.charCodeAt(i)
+    hash |= 0
+  }
+  return Math.abs(hash)
 }
